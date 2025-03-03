@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Booking</title>
+    <style>body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+    
+    header {
+        background-color: #d32f2f;
+        color: white;
+        padding: 15px;
+        font-size: 24px;
+    }
+    
+    .container {
+        width: 50%;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+    
+    form {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+    
+    label {
+        font-weight: bold;
+        margin-top: 10px;
+    }
+    
+    input, select {
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    
+    button {
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 15px;
+        border-radius: 5px;
+    }
+    
+    button:hover {
+        background-color: darkred;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    
+    th, td {
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+    
+    th {
+        background-color: #d32f2f;
+        color: white;
+    }
+    
+    .delete-btn {
+        background-color: darkred;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 3px;
+    }
+    </style>
+</head>
+<body>
+
+    <header>Book an Appointment</header>
+
+    <div class="container">
+        <form id="appointmentForm">
+            <label>Patient Name:</label>
+            <input type="text" id="patientName" required>
+
+            <label>Select Doctor:</label>
+<select id="doctorName">
+    <option value="Dr. Rahaman">Dr. Rahaman</option>
+    <option value="Dr. Vyas">Dr. Vyas</option>
+    <option value="Dr. Gupta">Dr. Gupta</option>
+</select>
+
+
+            <label>Appointment Date:</label>
+            <input type="date" id="appointmentDate" required>
+
+            <label>Appointment Time:</label>
+            <input type="time" id="appointmentTime" required>
+
+            <button type="submit">Book Appointment</button>
+        </form>
+
+        <h2>Scheduled Appointments</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Patient Name</th>
+                    <th>Doctor</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="appointmentsList"></tbody>
+        </table>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+<script>document.addEventListener("DOMContentLoaded", function () {
+    const appointmentForm = document.getElementById("appointmentForm");
+    const appointmentsList = document.getElementById("appointmentsList");
+
+    function loadAppointments() {
+        const appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+        appointmentsList.innerHTML = "";
+        appointments.forEach((appointment, index) => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${appointment.patientName}</td>
+                <td>${appointment.doctorName}</td>
+                <td>${appointment.date}</td>
+                <td>${appointment.time}</td>
+                <td><button class="delete-btn" onclick="deleteAppointment(${index})">Cancel</button></td>
+            `;
+            appointmentsList.appendChild(row);
+        });
+    }
+
+    appointmentForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const patientName = document.getElementById("patientName").value;
+        const doctorName = document.getElementById("doctorName").value;
+        const appointmentDate = document.getElementById("appointmentDate").value;
+        const appointmentTime = document.getElementById("appointmentTime").value;
+
+        if (!patientName || !appointmentDate || !appointmentTime) {
+            alert("Please fill all fields");
+            return;
+        }
+
+        const appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+        appointments.push({ patientName, doctorName, date: appointmentDate, time: appointmentTime });
+
+        localStorage.setItem("appointments", JSON.stringify(appointments));
+        loadAppointments();
+
+        appointmentForm.reset();
+        alert("Appointment booked successfully!");
+    });
+
+    window.deleteAppointment = function (index) {
+        let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+        appointments.splice(index, 1);
+        localStorage.setItem("appointments", JSON.stringify(appointments));
+        loadAppointments();
+    };
+
+    loadAppointments();
+});
+</script>
+</html>
