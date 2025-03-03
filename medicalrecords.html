@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Medical Records - Virtual Clinic</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #d9534f;
+        }
+        .patient-info {
+            background: #d9534f;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background: #d9534f;
+            color: white;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            color: white;
+            background: #d9534f;
+            text-decoration: none;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 15px;
+        }
+        .upload {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .upload input {
+            padding: 8px;
+            border: 1px solid #d9534f;
+            border-radius: 5px;
+        }
+        .upload button {
+            background: #d9534f;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Digital Medical Records</h1>
+
+        <div class="patient-info">
+            <p style="text-align: left;"><strong>Name:</strong> Giriraj Vyas</p>
+            <p style="text-align: left;"><strong>Age:</strong> 22</p>
+            <p style="text-align: left;"><strong>Gender:</strong> Male</p>
+            <p style="text-align: left;"><strong>Contact:</strong> +1234567890</p>
+        </div>
+
+        
+
+        <div class="container">
+            <h2>Upload Medical Reports</h2>
+            <input type="file" id="fileInput">
+            <button class="btn" onclick="uploadFile()">Upload</button>
+    
+            <h2>Previous Reports</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Report Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="fileList">
+                    <!-- Uploaded files will be listed here -->
+                </tbody>
+            </table>
+        </div>
+    
+        <script>
+            document.addEventListener("DOMContentLoaded", loadFiles);
+    
+            function uploadFile() {
+                const fileInput = document.getElementById("fileInput");
+                const file = fileInput.files[0];
+    
+                if (!file) {
+                    alert("Please select a file to upload.");
+                    return;
+                }
+    
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const fileData = {
+                        name: file.name,
+                        data: e.target.result
+                    };
+    
+                    let files = JSON.parse(localStorage.getItem("medicalReports")) || [];
+                    files.push(fileData);
+                    localStorage.setItem("medicalReports", JSON.stringify(files));
+    
+                    loadFiles();
+                    alert("File uploaded successfully!");
+                };
+                reader.readAsDataURL(file);
+            }
+    
+            function loadFiles() {
+                const fileList = document.getElementById("fileList");
+                fileList.innerHTML = "";
+    
+                let files = JSON.parse(localStorage.getItem("medicalReports")) || [];
+    
+                files.forEach((file, index) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${file.name}</td>
+                        <td>
+                            <button class="btn" onclick="downloadFile(${index})">Download</button>
+                            <button class="btn" style="background:gray;" onclick="deleteFile(${index})">Delete</button>
+                        </td>
+                    `;
+                    fileList.appendChild(row);
+                });
+            }
+    
+            function downloadFile(index) {
+                let files = JSON.parse(localStorage.getItem("medicalReports")) || [];
+                const file = files[index];
+    
+                const a = document.createElement("a");
+                a.href = file.data;
+                a.download = file.name;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+    
+            function deleteFile(index) {
+                let files = JSON.parse(localStorage.getItem("medicalReports")) || [];
+                files.splice(index, 1);
+                localStorage.setItem("medicalReports", JSON.stringify(files));
+    
+                loadFiles();
+            }
+        </script>
+</body>
+</html>

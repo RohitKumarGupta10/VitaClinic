@@ -380,3 +380,13 @@ img {
     max-width: 90%;
   }
 }
+
+
+a {
+  text-decoration: none;  /* Removes underline */
+  color: inherit; /* Uses the default text color */
+}
+
+a:hover {
+  text-decoration: none;
+}
