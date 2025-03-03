@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Consultation</title>
+    <link rel="stylesheet" href="services.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo"><i class="fa fa-medkit"></i> Virtual Clinic</a>
+            <ul class="nav-list">
+                <li class="nav-item"><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
+                <li class="nav-item"><a href="services.html" class="active"><i class="fa fa-video-camera"></i> Consultation</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Consultation Section -->
+    <section class="consultation">
+        <h2><i class="fa fa-video-camera"></i> Live Consultation</h2>
+        <div class="video-container" id="jitsi-container" style="width: 100%; height: 500px;">
+            <!-- Jitsi Meet will be loaded here -->
+        </div>
+        <div class="controls">
+            <button class="btn start" onclick="startCall()"><i class="fa fa-phone"></i> Start Call</button>
+            <button class="btn end" onclick="endCall()"><i class="fa fa-phone-slash"></i> End Call</button>
+        </div>
+    </section>
+
+    <!-- Additional Features Section -->
+    <section class="features">
+        <h2>Why Choose Our Virtual Clinic?</h2>
+        <div class="feature-container">
+            <div class="feature-box">
+                <i class="fa fa-user-md"></i>
+                <h3>Expert Doctors</h3>
+                <p>Connect with certified healthcare professionals from anywhere.</p>
+            </div>
+            <div class="feature-box">
+                <i class="fa fa-clock-o"></i>
+                <h3>24/7 Availability</h3>
+                <p>Book consultations anytime, day or night.</p>
+            </div>
+            <div class="feature-box">
+                <i class="fa fa-file-text"></i>
+                <h3>Digital Prescriptions</h3>
+                <p>Receive prescriptions online for easy access and medication tracking.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Jitsi Meet API -->
+    <script src="https://meet.jit.si/external_api.js"></script>
+    <script>
+        let api;
+
+        function startCall() {
+            const domain = "meet.jit.si";
+            const options = {
+                roomName: "VirtualClinicRoom",
+                width: "100%",
+                height: 500,
+                parentNode: document.getElementById("jitsi-container"),
+                interfaceConfigOverwrite: {
+                    filmStripOnly: false,
+                    SHOW_JITSI_WATERMARK: false
+                }
+            };
+            api = new JitsiMeetExternalAPI(domain, options);
+        }
+
+        function endCall() {
+            if (api) {
+                api.dispose(); // Closes the video call
+            }
+        }
+    </script>
+
+    <!-- Dialogflow Chatbot -->
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+    <df-messenger
+       intent="WELCOME"
+       chat-title="VitaClinic"
+       agent-id="939ec313-8067-4966-bafd-793dc9c7dc10"
+       language-code="en"
+    ></df-messenger>
+
+</body>
+</html>
